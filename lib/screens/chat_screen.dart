@@ -2,11 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
 
 class ChatScreen extends StatefulWidget {
+
+  static const String id = 'chat_screen';
+
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateMixin {
+
+  AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      duration: Duration(seconds: 1),
+      vsync: this,
+    );
+
+    _controller.forward();
+    _controller.addListener((){
+      print(_controller.value);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
