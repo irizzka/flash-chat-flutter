@@ -1,9 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/components/rounded_button.dart';
 import 'package:flash_chat/constants.dart';
+import 'package:flash_chat/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
-
   static const String id = 'login_screen';
 
   @override
@@ -11,6 +12,12 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _auth = FirebaseAuth.instance;
+
+  String email;
+  String password;
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,34 +32,53 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Container(
                 height: 200.0,
                 child: Image.asset('images/logo.png'),
-              ), tag: 'logo',
+              ),
+              tag: 'logo',
             ),
             SizedBox(
               height: 48.0,
             ),
             TextField(
+              keyboardType: TextInputType.emailAddress,
+              textAlign: TextAlign.center,
               onChanged: (value) {
                 //Do something with the user input.
+                email = value;
               },
-              decoration: KInputDecoration.copyWith(hintText: 'Enter your email'),
+              decoration:
+                  KInputDecoration.copyWith(hintText: 'Enter your email'),
             ),
             SizedBox(
               height: 8.0,
             ),
             TextField(
+              textAlign: TextAlign.center,
+              obscureText: true,
               onChanged: (value) {
                 //Do something with the user input.
+                password = value;
               },
-              decoration: KInputDecoration.copyWith(hintText: 'Enter your password'),
+              decoration:
+                  KInputDecoration.copyWith(hintText: 'Enter your password'),
             ),
             SizedBox(
               height: 24.0,
             ),
             RoundedButton(
-              title: 'Log in',
-              color: Colors.lightBlueAccent,
-              onPressed: () {},
-            ),
+                title: 'Log in',
+                color: Colors.lightBlueAccent,
+                onPressed: () async {
+                  try {
+                    final newUser = await _auth.signInWithEmailAndPassword(
+                        email: email, password: password);
+
+                    if (newUser != null) {
+                      Navigator.pushNamed(context, ChatScreen.id);
+                    }
+                  } catch (e) {
+                    print(e);
+                  }
+                }),
           ],
         ),
       ),

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "650978944224",
+    "firebase_url": "https://flash-chat-bcf07.firebaseio.com",
+    "project_id": "flash-chat-bcf07",
+    "storage_bucket": "flash-chat-bcf07.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:650978944224:android:d15b00c6b2576ad8e61c85",
+        "android_client_info": {
+          "package_name": "irizzka.flash_chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "650978944224-si5jh4n3ja08ig4bmls3gcig9q1l136n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEDp6fHKsjYUIfE-tOUjrkGJ29jN3fmaY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "650978944224-si5jh4n3ja08ig4bmls3gcig9q1l136n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

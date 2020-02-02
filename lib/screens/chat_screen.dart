@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
 
@@ -5,24 +6,42 @@ class ChatScreen extends StatefulWidget {
 
   static const String id = 'chat_screen';
 
+
+
+
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateMixin {
 
+  final _auth = FirebaseAuth.instance;
+  FirebaseUser loggedInUser;
   AnimationController _controller;
+
+  void getCurrentUser() async{
+    try{
+      final user = await _auth.currentUser();
+      if(user != null){
+        loggedInUser = user;
+        print(loggedInUser.email);
+      }
+    }catch(e){
+      print(e);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    getCurrentUser();
 
     _controller = AnimationController(
       duration: Duration(seconds: 1),
       vsync: this,
     );
 
-    _controller.forward();
+   // _controller.forward();
     _controller.addListener((){
       print(_controller.value);
     });
