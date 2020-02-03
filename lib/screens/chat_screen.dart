@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 class ChatScreen extends StatefulWidget {
 
   static const String id = 'chat_screen';
@@ -16,6 +16,8 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateMixin {
 
   final _auth = FirebaseAuth.instance;
+  final _fireStore = Firestore.instance;
+  String messageText;
   FirebaseUser loggedInUser;
   AnimationController _controller;
 
@@ -28,6 +30,21 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
       }
     }catch(e){
       print(e);
+    }
+  }
+  
+  /*void getMessages() async{
+   final messages = await _fireStore.collection('messages').getDocuments();
+    for(var message in messages.documents){
+      print(message.data);
+    }
+  }*/
+
+  void messagesStream() async{
+    await for(var snapshot in _fireStore.collection('messages').snapshots()) {
+      for( var message in snapshot.documents){
+
+      }
     }
   }
 
@@ -57,6 +74,9 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
               icon: Icon(Icons.close),
               onPressed: () {
                 //Implement logout functionality
+                messagesStream();
+              /*  _auth.signOut();
+                Navigator.pop(context);*/
               }),
         ],
         title: Text('⚡️Chat'),
@@ -67,6 +87,29 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            StreamBuilder<QuerySnapshot>(
+              stream: _fireStore.collection('messages').snapshots(),
+              builder: (context, snapshot){
+                if(!snapshot.hasData){
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                  final messages = snapshot.data.documents;
+                  List<Text> messageWidgets = [];
+                  for(var message in messages){
+                    final messageText = message.data['text'];
+                    final messageSender = message.data['sender'];
+
+                    final messageWidget = Text('$messageText from $messageSender');
+                    messageWidgets.add(messageWidget);
+                  }
+                  return Column(
+                    children: messageWidgets,
+                  );
+
+              },
+            ),
             Container(
               decoration: kMessageContainerDecoration,
               child: Row(
@@ -76,6 +119,7 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                     child: TextField(
                       onChanged: (value) {
                         //Do something with the user input.
+                        messageText = value;
                       },
                       decoration: kMessageTextFieldDecoration,
                     ),
@@ -83,6 +127,11 @@ class _ChatScreenState extends State<ChatScreen> with SingleTickerProviderStateM
                   FlatButton(
                     onPressed: () {
                       //Implement send functionality.
+                      _fireStore.collection('messages').add({
+                        'text' : messageText,
+                        'sender' : loggedInUser.email,
+                      });
+
                     },
                     child: Text(
                       'Send',
